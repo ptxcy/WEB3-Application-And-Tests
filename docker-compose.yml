@@ -1,0 +1,54 @@
+services:
+
+  frontend:
+    image: ptxy/frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+  backend:
+    image: ptxy/backend
+    container_name: backend
+    ports:
+      - "443:443"
+    networks:
+      - app-network
+    depends_on:
+      - database
+
+  database:
+    image: mongo:7
+    container_name: database
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+  selenium:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium
+    ports:
+      - "4444:4444"
+    shm_size: 4gb
+    networks:
+      - app-network
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tests
+    depends_on:
+      - selenium
+      - frontend
+      - backend
+      - database
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
