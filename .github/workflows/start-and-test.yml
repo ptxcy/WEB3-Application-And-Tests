@@ -18,18 +18,13 @@ jobs:
 
       - name: Build and start services
         run: |
-          docker compose up -d --build
+          docker compose up -d --build database frontend backend selenium 
 
       - name: Wait for services to be ready
         run: |
           echo "Waiting for services to be ready..."
-          sleep 20 # optional: kann angepasst werden, je nach Startup-Zeit der Dienste
+          sleep 20
 
       - name: Run tests
         run: |
-          docker compose run --rm tests
-
-      - name: Tear down
-        if: always()
-        run: |
-          docker-compose down -v
+          docker compose up --build tests
